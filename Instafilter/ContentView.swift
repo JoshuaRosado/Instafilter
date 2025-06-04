@@ -8,19 +8,30 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var blurAmount = 0.0
+    
+    @State private var showingConfirmation = false
+    @State private var backgroundColor = Color.white
     
     var body: some View {
-        VStack {
-            Text("Hello, world!")
-                .blur(radius: blurAmount)
-            //
-            Slider(value: $blurAmount, in : 0...20)
-            // When blurAmount updates,  return old and new value
-            // and print new value
-                .onChange(of: blurAmount) {oldValue, newValue in
-                    print("New value is \(newValue)")
-                }
+        Button("Hello, world"){
+            showingConfirmation.toggle()
+        }
+        .frame(width: 300, height: 300)
+        .background(backgroundColor)
+        // When the "var showingConfirmation" is triggered, open this confirmationDialog(small window with options)
+        .confirmationDialog("Change background", isPresented: $showingConfirmation){
+            
+            // All the options in the confirmationDialog()
+            Button("Red"){backgroundColor = .red}
+            Button("Green"){backgroundColor = .green}
+            Button("Blue"){backgroundColor = .blue}
+            // Always give a straight forward way for users to close this confirmationDialog()
+            Button("Cancel", role: .cancel){}
+
+            
+        } message: {
+            // Description
+            Text("Select a new color.")
         }
         
     }

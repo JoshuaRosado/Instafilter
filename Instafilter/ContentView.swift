@@ -5,34 +5,42 @@
 //  Created by Joshua Rosado Olivencia on 5/31/25.
 //
 
+import CoreImage
+import CoreImage.CIFilterBuiltins
 import SwiftUI
 
-struct ContentView: View {
+struct ContentView: View{
     
-    @State private var showingConfirmation = false
-    @State private var backgroundColor = Color.white
-    
+    @State private var image: Image?
     var body: some View {
-        Button("Hello, world"){
-            showingConfirmation.toggle()
+        VStack{
+            image?
+                .resizable()
+                .scaledToFit()
         }
-        .frame(width: 300, height: 300)
-        .background(backgroundColor)
-        // When the "var showingConfirmation" is triggered, open this confirmationDialog(small window with options)
-        .confirmationDialog("Change background", isPresented: $showingConfirmation){
-            
-            // All the options in the confirmationDialog()
-            Button("Red"){backgroundColor = .red}
-            Button("Green"){backgroundColor = .green}
-            Button("Blue"){backgroundColor = .blue}
-            // Always give a straight forward way for users to close this confirmationDialog()
-            Button("Cancel", role: .cancel){}
-
-            
-        } message: {
-            // Description
-            Text("Select a new color.")
-        }
+        .onAppear(perform: loadImage)
+    }
+    
+    func loadImage(){
+        let inputImage = UIImage(resource: .italy)
+        let beginImage = CIImage(image: inputImage)
+        
+        let context = CIContext()
+        let currentFilter = CIFilter.dither()
+        
+        currentFilter.inputImage = beginImage
+        currentFilter.intensity = 1
+        
+        
+        guard let outputImage = currentFilter.outputImage else { return}
+        
+        guard let cgImage = context.createCGImage(outputImage, from: outputImage.extent)
+        else {return}
+        
+        
+        let uiImage = UIImage(cgImage: cgImage)
+        image = Image(uiImage: uiImage)
+        
         
     }
 }

@@ -16,22 +16,30 @@ struct ContentView: View{
         VStack{
             image?
                 .resizable()
-                .scaledToFit()
+                
+                
         }
+        .ignoresSafeArea()
         .onAppear(perform: loadImage)
     }
     
     func loadImage(){
+        // load our Image into a UIImage
         let inputImage = UIImage(resource: .italy)
+        // put inputImage into a CIImage
         let beginImage = CIImage(image: inputImage)
         
+        
+        // make our context
         let context = CIContext()
+        // make our filter, select our filter
         let currentFilter = CIFilter.dither()
         
+        //
         currentFilter.inputImage = beginImage
-        currentFilter.intensity = 1
+        currentFilter.intensity = 0.5
         
-        
+        // guard = exit before it fails
         guard let outputImage = currentFilter.outputImage else { return}
         
         guard let cgImage = context.createCGImage(outputImage, from: outputImage.extent)

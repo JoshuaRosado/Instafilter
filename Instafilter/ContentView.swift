@@ -10,7 +10,7 @@ import CoreImage.CIFilterBuiltins
 import SwiftUI
 
 struct ContentView: View{
-    
+    // Use optional Image
     @State private var image: Image?
     var body: some View {
         VStack{

@@ -8,8 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
+    // Sharing image
+    let example = Image(.italy)
+    
     var body: some View {
-        ShareLink(item: URL(string: "https://wwww.hackingwithswift.com")!)
+        
+        // *Sharing URL
+        
+//        ShareLink(item: URL(string: "https://www.hackingwithswift.com")!){
+//            Label("Spread the word about hacking with swift", systemImage: "swift")
+//        }
+        
+        
+        // *Sharing Image
+        
+        ShareLink(item: example, preview: SharePreview("Italy", image: example)){
+            Label("Share", systemImage: "airplane")
+        }
     }
 }
 

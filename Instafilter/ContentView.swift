@@ -23,6 +23,7 @@ struct ContentView: View {
         // *Sharing Image
         
         ShareLink(item: example, preview: SharePreview("Italy", image: example)){
+            // Customizing the message
             Label("Share", systemImage: "airplane")
         }
     }

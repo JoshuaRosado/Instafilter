@@ -5,25 +5,51 @@
 //  Created by Joshua Rosado Olivencia on 5/31/25.
 //
 
-// STEP 1
-import StoreKit //*
 import SwiftUI
 
 struct ContentView: View {
-    // STEP 2
-    // ADD Property to read the review requester from SwiftUI's environment
-    @Environment(\.requestReview) var requestReview
+    @State private var processedImage: Image?
+    @State private var filterIntensity = 0.5
     var body: some View {
-        Text("Instafilter")
-        
-        // STEP 3
-        // Need to request a review when ready
-        
-        Button("Leave a review"){
-            requestReview()
+        VStack{
+            Spacer()
+            //image area
+            if let processedImage {
+                processedImage
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                ContentUnavailableView("No picture", systemImage: "photo.badge.plus", description: Text("Tap to import a photo"))
+            }
+            Spacer()
+            
+            HStack{
+                Text("Intensity")
+                Slider(value:$filterIntensity)
+            }
+            
+            HStack{
+                Button("Change Filter", action: changeFilter)
+                    //change filter
+                
+                Spacer()
+                
+                    //share the picture
+            }
+            
         }
+        .padding([.horizontal, .bottom])
+        .navigationTitle("Instafilter")
+        
+        
+        }
+    
+    func changeFilter() {
+        
     }
+      
 }
+
 #Preview {
     ContentView()
 }

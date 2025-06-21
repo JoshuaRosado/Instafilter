@@ -5,7 +5,9 @@
 //  Created by Joshua Rosado Olivencia on 5/31/25.
 //
 
-import PhotosUI
+import CoreImage
+import CoreImage.CIFilterBuiltins
+import PhotosUI //*
 import SwiftUI
 
 struct ContentView: View {
@@ -17,6 +19,12 @@ struct ContentView: View {
     // Track every picture selected
     // Optional, there isn't one by default
     @State private var selectedItem: PhotosPickerItem?
+    
+    
+    // Select the filter
+    @State private var currentFilter = CIFilter.sepiaTone()
+    // Create a context
+    let context = CIContext()
     
     var body: some View {
         VStack{
@@ -35,12 +43,14 @@ struct ContentView: View {
             }
             // To avoid having the systemImage to be blue (SwiftUI letting users know that the image is interactive) use buttonStyle plain
             .buttonStyle(.plain)
+            .onChange(of: selectedItem, loadImage)
                 Spacer()
             
             HStack{
                 Text("Intensity")
                 // Slider to adjust the Intensity of the filter
                 Slider(value:$filterIntensity)
+                    .onChange(of: filterIntensity, applyProcessing)
             }
             
             HStack{
@@ -72,10 +82,26 @@ struct ContentView: View {
             guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
             
             // insert imageData into a UIImage
-            guard UIImage(data: imageData) != nil else { return }
+            guard let inputImage = UIImage(data: imageData) else { return }
+            
+            
+            let beginImage = CIImage(image: inputImage)
+            currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
+            
+            applyProcessing()
             
             
         }
+    }
+    
+    func applyProcessing() {
+        currentFilter.intensity = Float(filterIntensity)
+        
+        guard let outputImage = currentFilter.outputImage else { return }
+        guard let cgImage = context.createCGImage(outputImage, from: outputImage.extent) else { return }
+        
+        let uiImage = UIImage(cgImage: cgImage)
+        processedImage = Image(uiImage: uiImage)
     }
       
 }

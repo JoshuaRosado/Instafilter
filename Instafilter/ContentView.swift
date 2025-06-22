@@ -99,6 +99,7 @@ struct ContentView: View {
         
         guard let outputImage = currentFilter.outputImage else { return }
         guard let cgImage = context.createCGImage(outputImage, from: outputImage.extent) else { return }
+        // .extent = Read it all
         
         let uiImage = UIImage(cgImage: cgImage)
         processedImage = Image(uiImage: uiImage)

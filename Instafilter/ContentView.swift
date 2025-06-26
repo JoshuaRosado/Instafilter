@@ -86,11 +86,13 @@ struct ContentView: View {
         }
     
     func changeFilter() {
+        // Toggle the @State tracking if filters selection is being displayed
         showingFilters = true
         
     }
     
     func loadImage() {
+        // loading an image -> use Task
         Task{
             
             // load data if there is one
@@ -138,7 +140,9 @@ struct ContentView: View {
     }
     
     func setFilter(_ filter: CIFilter) {
+        // Update our current filter with the filter selected
         currentFilter = filter
+        // Load image with the new filter
         loadImage()
         
     }

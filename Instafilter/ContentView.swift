@@ -62,6 +62,10 @@ struct ContentView: View {
                 
                 Spacer()
                 
+                if let processedImage {
+                    ShareLink(item: processedImage, preview: SharePreview("Instafilter image", image: processedImage))
+                }
+                
                     //share the picture
             }
             

@@ -41,6 +41,12 @@ struct ContentView: View {
                         .scaledToFit()
                 } else {
                     // If there's no image, Display a customized ContentUnavailableView
+                    
+                    // ContentUnavailableView > PersonalCustomizedView
+                    
+                    // ContentUnavailableView runs with Apple's standards. Users are already familiarized with the patterns. Clean a nd professional appareance
+                    
+                    
                     ContentUnavailableView("No picture", systemImage: "photo.badge.plus", description: Text("Import a photo to get started"))
                 }
             }

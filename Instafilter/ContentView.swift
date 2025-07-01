@@ -8,6 +8,7 @@
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import PhotosUI //*
+import StoreKit //*
 import SwiftUI
 
 struct ContentView: View {
@@ -22,6 +23,15 @@ struct ContentView: View {
     
     // Check if confirmationDialog() is showing or not
     @State private var showingFilters = false
+    
+    // Track how many filter changes have taken place
+    @AppStorage("filterCount") var filterCount = 0
+    
+    @Environment(\.requestReview) var requestReview
+    
+    
+    
+    
     
     
     // Select the filter
@@ -149,11 +159,17 @@ struct ContentView: View {
         processedImage = Image(uiImage: uiImage)
     }
     
-    func setFilter(_ filter: CIFilter) {
+    @MainActor func setFilter(_ filter: CIFilter) {
         // Update our current filter with the filter selected
         currentFilter = filter
         // Load image with the new filter
         loadImage()
+        
+        filterCount += 1
+        
+        if filterCount >= 3 {
+            requestReview()
+        }
         
     }
  

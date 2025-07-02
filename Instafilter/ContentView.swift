@@ -12,91 +12,76 @@ import StoreKit //*
 import SwiftUI
 
 struct ContentView: View {
-    // Track the Image if there's an existing one.
     @State private var processedImage: Image?
-    // Add a value to track the Intensity of the filter
     @State private var filterIntensity = 0.5
-    
-    // Track every picture selected
-    // Optional, there isn't one by default
     @State private var selectedItem: PhotosPickerItem?
+
+    // Challenge 1 - track if an image is selected or not.
+    @State private var isImageSelected = true
     
-    // Check if confirmationDialog() is showing or not
     @State private var showingFilters = false
-    
-    // Track how many filter changes have taken place
+
     @AppStorage("filterCount") var filterCount = 0
-    
     @Environment(\.requestReview) var requestReview
     
-    
-    
-    
-    
-    
-    // Select the filter
     @State private var currentFilter: CIFilter = CIFilter.sepiaTone()
-    // Create a context
+
     let context = CIContext()
     
     var body: some View {
         VStack{
             Spacer()
-            // Add a PhotosPicker view to trigger an image selection
-            //image area
             PhotosPicker(selection: $selectedItem){
                 if let processedImage {
+                    
                     processedImage
                         .resizable()
                         .scaledToFit()
                 } else {
-                    // If there's no image, Display a customized ContentUnavailableView
-                    
-                    // ContentUnavailableView > PersonalCustomizedView
-                    
-                    // ContentUnavailableView runs with Apple's standards. Users are already familiarized with the patterns. Clean a nd professional appareance
-                    
                     
                     ContentUnavailableView("No picture", systemImage: "photo.badge.plus", description: Text("Import a photo to get started"))
+                    
+                    
                 }
             }
-            // To avoid having the systemImage to be blue (SwiftUI letting users know that the image is interactive) use buttonStyle plain
             .buttonStyle(.plain)
             .onChange(of: selectedItem, loadImage)
                 Spacer()
             
             HStack{
                 Text("Intensity")
-                // Slider to adjust the Intensity of the filter
+                
                 Slider(value:$filterIntensity)
                     .onChange(of: filterIntensity, applyProcessing)
+                // Challenge 1 - Disable if an Image has not been selected.
+                    .disabled(isImageSelected)
             }
             
             HStack{
                 Button("Change Filter", action: changeFilter)
-                    //change filter
-                
                 Spacer()
                 
                 if let processedImage {
                     ShareLink(item: processedImage, preview: SharePreview("Instafilter image", image: processedImage))
                 }
-                
-                    //share the picture
+        
             }
+            // Challenge 1 - Disable if an Image has not been selected.
+            .disabled(isImageSelected)
+            
             
         }
-        // Use Arrays to customize .padding
+
         .padding([.horizontal, .bottom])
         .navigationTitle("Instafilter")
-        // When selecting Change Filter, Open a confirmationDialog with multiple different filters to choose from
+ 
         .confirmationDialog("Select a filter", isPresented: $showingFilters){
             Button("Crystallize") { setFilter(CIFilter.crystallize())}
             Button("Edges") { setFilter(CIFilter.edges())}
             Button("Gaussian Blur") { setFilter(CIFilter.gaussianBlur())}
             Button("Pixellate") { setFilter(CIFilter.pixellate())}
             Button("Sepia Tone") { setFilter(CIFilter.sepiaTone())}
-            Button("Unsharp Mark") { setFilter(CIFilter.unsharpMask())}
+            Button("Unsharp Mask") { setFilter(CIFilter.unsharpMask())}
             Button("Vignette") { setFilter(CIFilter.vignette())}
             Button("Cancel", role: .cancel){}
             
@@ -106,19 +91,18 @@ struct ContentView: View {
         }
     
     func changeFilter() {
-        // Toggle the @State tracking if filters selection is being displayed
+
         showingFilters = true
         
     }
     
     func loadImage() {
-        // loading an image -> use Task
+
         Task{
             
-            // load data if there is one
+
             guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
-            
-            // insert imageData into a UIImage
+
             guard let inputImage = UIImage(data: imageData) else { return }
             
             
@@ -126,6 +110,9 @@ struct ContentView: View {
             currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
             
             applyProcessing()
+            
+            // Trigger the boolean to let us know an image has being selected
+            isImageSelected = false
             
             
         }

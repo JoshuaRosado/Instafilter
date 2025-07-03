@@ -13,6 +13,8 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var processedImage: Image?
+    // Challenge 2 - Track the filter's radius digit. So we can use it in a Slider
+    @State private var filterRadius = 0.1
     @State private var filterIntensity = 0.5
     @State private var selectedItem: PhotosPickerItem?
 
@@ -53,6 +55,15 @@ struct ContentView: View {
                 
                 Slider(value:$filterIntensity)
                     .onChange(of: filterIntensity, applyProcessing)
+                // Challenge 1 - Disable if an Image has not been selected.
+                    .disabled(isImageSelected)
+            }
+            // Challenge 2 - New Slider
+            HStack{
+                Text("Radius")
+                
+                Slider(value:$filterRadius)
+                    .onChange(of: filterRadius, applyProcessing)
                 // Challenge 1 - Disable if an Image has not been selected.
                     .disabled(isImageSelected)
             }
@@ -130,8 +141,10 @@ struct ContentView: View {
         if inputKeys.contains(kCIInputIntensityKey){
             currentFilter.setValue(filterIntensity, forKey: kCIInputIntensityKey)}
         
+        // Challenge 2 - Update the property to "filterRadius" to match any filter selected that uses the RadiusKey
+        
         if inputKeys.contains(kCIInputRadiusKey){
-            currentFilter.setValue(filterIntensity * 200, forKey: kCIInputRadiusKey)
+            currentFilter.setValue(filterRadius * 200, forKey: kCIInputRadiusKey)
         }
         
         if inputKeys.contains(kCIInputScaleKey){
